@@ -1,4 +1,10 @@
-//---------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
+// Tham chiếu thư viện
+var MongoClient = require('mongodb').MongoClient;
+// link kết nối đến database
+var url = "mongodb+srv://dht11connector:connectMongoDB@cluster0.8zaaw.mongodb.net/DHT11?retryWrites=true&w=majority";
+// tạo đối tượng và truyền dữ liệu qua url
+var mongo = new MongoClient(url, { useNewUrlParser: true });
 var fs = require('fs');
 var url = require('url');
 var http = require('http');
@@ -22,17 +28,30 @@ function requestHandler(request, response) {
         };
         db.push(newData);
         console.log(newData);
+        // Kết nối đến Database
+        mongo.connect((err, db) => {
+            if (err) throw err;
+            console.log("Kết nối thành công");
+            // chọn database để sử dụng
+            var dbo = db.db("DHT11");
+            dbo.collection("data").insertOne(newData, (err, result) => {
+                if (err) throw err;
+                console.log("Thêm thành công");
+                console.log(result);
+                db.close();
+            });
+        });
         response.end();
-    //-----------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------
     } else if (pathname == '/get') {
         response.writeHead(200, {
             'Content-Type': 'application/json'
         });
         response.end(JSON.stringify(db));
         db = [];
-    //-----------------------------------------------------------------------------------------
-    } else { 
-        fs.readFile('./index.html', function(error, content) {
+        //-----------------------------------------------------------------------------------------
+    } else {
+        fs.readFile('./index.html', function (error, content) {
             response.writeHead(200, {
                 'Content-Type': 'text/html'
             });
@@ -42,5 +61,5 @@ function requestHandler(request, response) {
     //-----------------------------------------------------------------------------------------
 }
 var server = http.createServer(requestHandler);
-server.listen(80); 
+server.listen(80);
 console.log('Server listening on port 8000  url:  http://localhost:8000');

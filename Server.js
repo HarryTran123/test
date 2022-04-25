@@ -2,9 +2,9 @@
 // Tham chiếu thư viện
 var MongoClient = require('mongodb').MongoClient;
 // link kết nối đến database
-var url = "mongodb+srv://dht11connector:connectMongoDB@cluster0.8zaaw.mongodb.net/DHT11?retryWrites=true&w=majority";
+var link = "mongodb+srv://dht11connector:connectMongoDB@cluster0.8zaaw.mongodb.net/DHT11?retryWrites=true&w=majority";
 // tạo đối tượng và truyền dữ liệu qua url
-var mongo = new MongoClient(url, { useNewUrlParser: true });
+var mongo = new MongoClient(link, { useNewUrlParser: true });
 var fs = require('fs');
 var url = require('url');
 var http = require('http');
